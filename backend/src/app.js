@@ -7,6 +7,8 @@ import courseRoutes from "./routes/courseRoutes.js";
 import certificateRoutes from "./routes/certificateRoutes.js";
 import facultyroutes from "./routes/facultyRoutes.js";
 import studentRoutes from "./routes/studentdashboardroutes.js";
+import profileRoutes from "./routes/profileRoutes.js";
+
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -24,6 +26,7 @@ app.use("/api/courses", courseRoutes);
 app.use("/api/certificates", certificateRoutes);
 app.use("/api/faculty", facultyroutes);
 app.use("/api/student", studentRoutes);
+app.use("/api/profile", profileRoutes);
 app.use(errorMiddleware);
 //app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use('/uploads', express.static('uploads'));

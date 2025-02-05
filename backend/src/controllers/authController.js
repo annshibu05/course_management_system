@@ -1,9 +1,3 @@
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import User from "../models/User.js";
-import env from "../config/env.js";
-import { registerSchema, loginSchema } from "../utils/validation.js"; // Import Zod schemas
-
 // const register = async (req, res) => {
 //     const { name, email, password, role } = req.body;
 //     const userExists = await User.findOne({ email });
@@ -69,6 +63,11 @@ import { registerSchema, loginSchema } from "../utils/validation.js"; // Import 
 // export { register, login };
 
 
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
+import env from "../config/env.js";
+import { registerSchema, loginSchema } from "../utils/validation.js"; // Import Zod schemas
 
 // Register controller
 const register = async (req, res) => {
@@ -171,4 +170,41 @@ const profile = async (req, res) => {
     }
 };
 
-export { register, login, profile};
+
+// Add this new controller
+const updateProfile = async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const updates = req.body;
+  
+      // Prevent email and role changes
+      delete updates.email;
+      delete updates.role;
+  
+      const user = await User.findByIdAndUpdate(
+        userId,
+        { $set: updates },
+        { new: true, runValidators: true }
+      ).select("-password");
+  
+      res.json({
+        message: "Profile updated successfully",
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          phone: user.phone,
+          profilePicture: user.profilePicture,
+          usn: user.usn,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server error, please try again later" });
+    }
+  };
+
+export { register, login, profile, updateProfile};
